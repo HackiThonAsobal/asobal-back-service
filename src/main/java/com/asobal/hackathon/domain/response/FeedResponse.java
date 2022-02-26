@@ -23,7 +23,7 @@ public class FeedResponse {
     private long likes;
     private Boolean isLiked;
     private List<CommentResponse> comments;
-    private LocalDateTime publicationDaTe;
+    private LocalDateTime publicationDate;
     private LocalDateTime matchDate;
     private String userId;
     private List<String> tags;

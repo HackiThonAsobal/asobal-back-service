@@ -70,7 +70,7 @@ public class FeedServiceImpl implements FeedService {
                     x.getLikes(),
                     false,
                     x.getComments(),
-                    x.getPublicationDaTe(),
+                    x.getPublicationDate(),
                     x.getMatchDate(),
                     x.getUserId(),
                     x.getTags()
@@ -94,7 +94,7 @@ public class FeedServiceImpl implements FeedService {
                     x.getLikes(),
                     x.getIsLiked(),
                     x.getComments(),
-                    x.getPublicationDaTe(),
+                    x.getPublicationDate(),
                     x.getMatchDate(),
                     x.getUserId(),
                     x.getTags()
@@ -201,7 +201,7 @@ public class FeedServiceImpl implements FeedService {
                 if (hasXPendingComments && !hasYPendingComments) return -1;
                 else if (hasYPendingComments && !hasXPendingComments) return 1;
             }
-            return x.getPublicationDaTe().compareTo(y.getPublicationDaTe());
+            return x.getPublicationDate().compareTo(y.getPublicationDate());
         };
 
         // Publicaciones en las que ha comentado y hay nuevas respuestas de otros usuarios
@@ -229,7 +229,7 @@ public class FeedServiceImpl implements FeedService {
                 if (hasXPendingComments && !hasYPendingComments) return -1;
                 else if (hasYPendingComments && !hasXPendingComments) return 1;
             }
-            return x.getPublicationDaTe().compareTo(y.getPublicationDaTe());
+            return x.getPublicationDate().compareTo(y.getPublicationDate());
         };
 
         Optional<Team> team = teamRepository.findById(userInfo.getTeamId());
@@ -257,7 +257,7 @@ public class FeedServiceImpl implements FeedService {
                     return 1;
                 }
             }
-            return x.getPublicationDaTe().compareTo(y.getPublicationDaTe());
+            return x.getPublicationDate().compareTo(y.getPublicationDate());
         };
 
         // Calculamos los tags con más valor para el usuario.
