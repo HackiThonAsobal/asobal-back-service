@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Data
 @Builder
-public class UserProfile {
+public class UserResponse {
     private String name;
     private String lastName;
     private String gender;

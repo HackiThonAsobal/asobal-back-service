@@ -5,20 +5,14 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDate;
-
-@Document("user")
+@Document("team")
 @Data
 @Builder
-public class User {
+public class Team {
     @Id
     private String id;
-
-    private String email;
     private String name;
-    private String lastName;
-    private String gender;
-    private String teamId;
-    private LocalDate birthDate;
-    private String type;
+    private String logo;
+    private int score;
+    private int position;
 }
