@@ -9,4 +9,6 @@ public interface FeedService {
     List<FeedResponse> getFeedList(String email);
 
     void setUpFeedContent(String email, FeedContentRequest feedContentRequest);
+
+    void likeAction(String email, String postId);
 }

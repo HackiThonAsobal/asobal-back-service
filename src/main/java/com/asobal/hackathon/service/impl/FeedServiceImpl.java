@@ -70,8 +70,8 @@ public class FeedServiceImpl implements FeedService {
                     x.getPublicationDaTe(),
                     x.getMatchDate()
             );
-            if (likedPosts.stream().filter(y -> y.getId().equals(x.getId())).findAny().isPresent()) {
-                x.setIsLiked(true);
+            if (likedPosts.stream().anyMatch(y -> y.getPostId().equals(x.getId()))) {
+                a.setIsLiked(true);
             }
             return a;
         }).toList();
@@ -124,6 +124,17 @@ public class FeedServiceImpl implements FeedService {
                             .comments(new ArrayList<>())
                             .build()
             );
+        }
+    }
+
+    @Override
+    public void likeAction(String email, String postId) {
+        User userInfo = userRepository.findAllByEmail(email).get(0);
+        Optional<Like> optLike = likeRepository.findByPostIdAndUserId(postId, userInfo.getId());
+        if(optLike.isPresent()){
+            likeRepository.delete(optLike.get());
+        } else{
+            likeRepository.save(Like.builder().postId(postId).userId(userInfo.getId()).build());
         }
     }
 }

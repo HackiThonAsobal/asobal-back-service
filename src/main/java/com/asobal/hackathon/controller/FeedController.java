@@ -5,14 +5,11 @@ import com.asobal.hackathon.domain.response.FeedResponse;
 import com.asobal.hackathon.service.FeedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@RestController()
 public class FeedController {
 
     @Autowired
@@ -25,12 +22,20 @@ public class FeedController {
         return feedService.getFeedList(email);
     }
 
-    @PostMapping("api/feed")
+    @PostMapping("/api/feed")
     public List<FeedResponse> setUpFeedContent(@RequestBody FeedContentRequest feedContentRequest) {
         String email = SecurityContextHolder.getContext().getAuthentication().getAuthorities()
                 .stream().findFirst().get().toString();
 
         feedService.setUpFeedContent(email, feedContentRequest);
+        return feedService.getFeedList(email);
+    }
+
+    @PatchMapping("/api/feed")
+    public List<FeedResponse> likeAction(@RequestParam(name = "postId") String postId) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .stream().findFirst().get().toString();
+        feedService.likeAction(email, postId);
         return feedService.getFeedList(email);
     }
 }
