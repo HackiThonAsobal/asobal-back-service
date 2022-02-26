@@ -4,6 +4,7 @@ import com.asobal.hackathon.domain.request.UserRequest;
 import com.asobal.hackathon.domain.response.UserResponse;
 import com.asobal.hackathon.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,13 +18,15 @@ public class UserController {
 
     @PostMapping("/api/profile")
     public UserResponse getProfile(){
-        String email = "test@test.com";
+        String email = SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .stream().findFirst().get().toString();
         return userService.getUserProfile(email);
     }
 
     @PutMapping("/api/profile")
     public UserResponse setUpProfile(@RequestBody UserRequest userRequest){
-        String email = "test@test.com";
+        String email = SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .stream().findFirst().get().toString();
         return userService.setUserProfile(email, userRequest);
     }
 
