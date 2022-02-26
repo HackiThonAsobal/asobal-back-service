@@ -25,4 +25,5 @@ public class FeedResponse {
     private List<CommentResponse> comments;
     private LocalDateTime publicationDaTe;
     private LocalDateTime matchDate;
+    private String userId;
 }

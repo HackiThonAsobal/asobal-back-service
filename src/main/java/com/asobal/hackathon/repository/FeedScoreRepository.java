@@ -6,5 +6,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 public interface FeedScoreRepository extends MongoRepository<FeedScore, String> {
-    List<FeedScore> findByObjectIdAndUserIdAndType(String objectId, String userId, String type);
+    List<FeedScore> findByUserIdAndType(String id, String type);
 }

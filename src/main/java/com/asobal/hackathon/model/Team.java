@@ -15,4 +15,5 @@ public class Team {
     private String logo;
     private int score;
     private int position;
+    private String tag;
 }

@@ -9,6 +9,8 @@ import com.asobal.hackathon.service.FeedScoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class FeedScoreServiceImpl implements FeedScoreService {
 
@@ -26,6 +28,7 @@ public class FeedScoreServiceImpl implements FeedScoreService {
                 .type(feedScoreRequest.getType())
                 .userId(userInfo.getId())
                 .timeSpent(feedScoreRequest.getTime())
+                .date(LocalDateTime.now())
                 .build()
         );
     }

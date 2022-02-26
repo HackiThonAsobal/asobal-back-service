@@ -23,6 +23,7 @@ public class Feed {
     private String teamTwoImage;
     private List<CommentResponse> comments;
     private LocalDateTime publicationDaTe;
+    private LocalDateTime lastModificationDate;
     private LocalDateTime matchDate;
     private List<String> tags;
     private String userId;

@@ -5,6 +5,8 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+
 @Document("score")
 @Data
 @Builder
@@ -16,4 +18,5 @@ public class FeedScore {
     private String type;
     private String userId;
     private long timeSpent;
+    private LocalDateTime date;
 }
