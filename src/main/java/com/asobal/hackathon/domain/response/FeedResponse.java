@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class FeedResponse {
     private String id;
-    private String tittle;
+    private String title;
     private String description;
     private String image;
     private String type;

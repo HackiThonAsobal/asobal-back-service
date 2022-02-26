@@ -7,7 +7,7 @@ import javax.validation.constraints.Pattern;
 
 @Data
 public class FeedContentRequest {
-    private String tittle;
+    private String title;
     @NotBlank
     private String description;
     private String image;

@@ -15,7 +15,7 @@ import java.util.List;
 public class Feed {
     @Id
     private String id;
-    private String tittle;
+    private String title;
     private String description;
     private String image;
     private String type;

@@ -40,7 +40,7 @@ public class FeedServiceImpl implements FeedService {
 
         List<FeedResponse> result = listFeed.stream().map(x -> FeedResponse.builder()
                 .id(x.getId())
-                .tittle(x.getTittle())
+                .title(x.getTitle())
                 .description(x.getDescription())
                 .image(x.getImage())
                 .type(x.getType())
@@ -61,7 +61,7 @@ public class FeedServiceImpl implements FeedService {
         List<FeedResponse> resultWithUserLikes = result.stream().map(x -> {
             FeedResponse a = new FeedResponse(
                     x.getId(),
-                    x.getTittle(),
+                    x.getTitle(),
                     x.getDescription(),
                     x.getImage(),
                     x.getType(),
@@ -85,7 +85,7 @@ public class FeedServiceImpl implements FeedService {
         List<FeedResponse> resultWithFullLikeInfo = resultWithUserLikes.stream().map(x -> {
             FeedResponse a = new FeedResponse(
                     x.getId(),
-                    x.getTittle(),
+                    x.getTitle(),
                     x.getDescription(),
                     x.getImage(),
                     x.getType(),
@@ -127,7 +127,7 @@ public class FeedServiceImpl implements FeedService {
 
             feedRepository.save(
                     Feed.builder()
-                            .tittle(feedContentRequest.getTittle())
+                            .title(feedContentRequest.getTitle())
                             .description(feedContentRequest.getDescription())
                             .image(feedContentRequest.getImage())
                             .type(feedContentRequest.getType())
