@@ -51,7 +51,7 @@ public class FeedServiceImpl implements FeedService {
                 .teamOneImage(x.getTeamOneImage())
                 .teamTwoImage(x.getTeamTwoImage())
                 .comments(x.getComments())
-                .publicationDaTe(x.getPublicationDate())
+                .publicationDate(x.getPublicationDate())
                 .matchDate(x.getMatchDate())
                 .userId(x.getUserId())
                 .tags(x.getTags())
