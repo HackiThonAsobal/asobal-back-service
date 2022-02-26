@@ -107,8 +107,9 @@ public class FeedServiceImpl implements FeedService {
             fatherFeedItem.get().getComments().add(
                     CommentResponse.builder()
                             .description(feedContentRequest.getDescription())
-                            .userName(userInfo.getName() + " " +userInfo.getLastName())
+                            .userName(userInfo.getName() + " " + userInfo.getLastName())
                             .userId(userInfo.getId())
+                            .commentDate(LocalDateTime.now())
                             .build()
             );
             feedRepository.save(fatherFeedItem.get());
@@ -131,9 +132,9 @@ public class FeedServiceImpl implements FeedService {
     public void likeAction(String email, String postId) {
         User userInfo = userRepository.findAllByEmail(email).get(0);
         Optional<Like> optLike = likeRepository.findByPostIdAndUserId(postId, userInfo.getId());
-        if(optLike.isPresent()){
+        if (optLike.isPresent()) {
             likeRepository.delete(optLike.get());
-        } else{
+        } else {
             likeRepository.save(Like.builder().postId(postId).userId(userInfo.getId()).build());
         }
     }

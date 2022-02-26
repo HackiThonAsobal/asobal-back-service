@@ -3,15 +3,15 @@ package com.asobal.hackathon.domain.request;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Data
-public class FeedContentRequest {
-    private String tittle;
+public class FeedScoreRequest {
     @NotBlank
-    private String description;
-    private String image;
-    @Pattern(regexp = "^(COMMENT|POST)$")
+    private String id;
+    @Pattern(regexp = "^(FEED|TEAM|PLAYER)$")
     private String type;
-    private String linkedPostId;
+    @NotNull
+    private long time;
 }
