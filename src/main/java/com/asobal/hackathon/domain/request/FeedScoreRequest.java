@@ -10,7 +10,7 @@ import javax.validation.constraints.Pattern;
 public class FeedScoreRequest {
     @NotBlank
     private String id;
-    @Pattern(regexp = "^(FEED|TEAM|PLAYER)$")
+    @Pattern(regexp = "^(FEED|TEAM|PLAYER|NEWS)$")
     private String type;
     @NotNull
     private long time;
