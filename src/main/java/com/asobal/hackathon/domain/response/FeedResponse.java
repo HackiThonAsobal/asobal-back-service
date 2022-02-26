@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -23,6 +23,6 @@ public class FeedResponse {
     private long likes;
     private Boolean isLiked;
     private List<CommentResponse> comments;
-    private LocalDate publicationDaTe;
-    private LocalDate matchDate;
+    private LocalDateTime publicationDaTe;
+    private LocalDateTime matchDate;
 }

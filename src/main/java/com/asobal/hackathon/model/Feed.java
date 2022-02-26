@@ -6,7 +6,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Document("feed")
@@ -22,9 +22,10 @@ public class Feed {
     private String teamOneImage;
     private String teamTwoImage;
     private List<CommentResponse> comments;
-    private LocalDate publicationDaTe;
-    private LocalDate matchDate;
+    private LocalDateTime publicationDaTe;
+    private LocalDateTime matchDate;
     private List<String> tags;
+    private String userId;
 }
 
 

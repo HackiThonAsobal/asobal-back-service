@@ -1,5 +1,6 @@
 package com.asobal.hackathon.service.impl;
 
+import com.asobal.hackathon.domain.request.FeedContentRequest;
 import com.asobal.hackathon.domain.response.CommentResponse;
 import com.asobal.hackathon.domain.response.FeedResponse;
 import com.asobal.hackathon.model.Feed;
@@ -12,9 +13,10 @@ import com.asobal.hackathon.service.FeedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 public class FeedServiceImpl implements FeedService {
@@ -95,5 +97,33 @@ public class FeedServiceImpl implements FeedService {
         }).toList();
 
         return resultWithFullLikeInfo;
+    }
+
+    @Override
+    public void setUpFeedContent(String email, FeedContentRequest feedContentRequest) {
+        User userInfo = userRepository.findAllByEmail(email).get(0);
+        if (feedContentRequest.getType().equals("COMMENT")) {
+            Optional<Feed> fatherFeedItem = feedRepository.findById(feedContentRequest.getLinkedPostId());
+            fatherFeedItem.get().getComments().add(
+                    CommentResponse.builder()
+                            .description(feedContentRequest.getDescription())
+                            .userName(userInfo.getName() + " " +userInfo.getLastName())
+                            .userId(userInfo.getId())
+                            .build()
+            );
+            feedRepository.save(fatherFeedItem.get());
+        } else {
+            feedRepository.save(
+                    Feed.builder()
+                            .tittle(feedContentRequest.getTittle())
+                            .description(feedContentRequest.getDescription())
+                            .image(feedContentRequest.getImage())
+                            .type(feedContentRequest.getType())
+                            .publicationDaTe(LocalDateTime.now())
+                            .userId(userInfo.getId())
+                            .comments(new ArrayList<>())
+                            .build()
+            );
+        }
     }
 }
