@@ -19,7 +19,7 @@ public class FeedScoringController {
     @Autowired
     FeedScoreService feedScoreService;
 
-    @PostMapping("/api/feed/score")
+    @PostMapping("/api/score")
     public void setUpFeedScore(@Valid @RequestBody FeedScoreRequest feedScoreRequest){
         String email = SecurityContextHolder.getContext().getAuthentication().getAuthorities()
                 .stream().findFirst().get().toString();
