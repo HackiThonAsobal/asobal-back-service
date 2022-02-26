@@ -14,7 +14,6 @@ import javax.validation.Valid;
 
 @RestController
 @Validated
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class FeedScoringController {
 
     @Autowired
