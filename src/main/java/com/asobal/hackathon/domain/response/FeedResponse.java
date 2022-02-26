@@ -26,4 +26,5 @@ public class FeedResponse {
     private LocalDateTime publicationDaTe;
     private LocalDateTime matchDate;
     private String userId;
+    private List<String> tags;
 }

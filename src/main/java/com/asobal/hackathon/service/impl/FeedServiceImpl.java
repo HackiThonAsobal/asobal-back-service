@@ -50,6 +50,7 @@ public class FeedServiceImpl implements FeedService {
                 .publicationDaTe(x.getPublicationDaTe())
                 .matchDate(x.getMatchDate())
                 .userId(x.getUserId())
+                .tags(x.getTags())
                 .build()
         ).toList();
 
@@ -71,7 +72,8 @@ public class FeedServiceImpl implements FeedService {
                     x.getComments(),
                     x.getPublicationDaTe(),
                     x.getMatchDate(),
-                    x.getUserId()
+                    x.getUserId(),
+                    x.getTags()
             );
             if (likedPosts.stream().anyMatch(y -> y.getPostId().equals(x.getId()))) {
                 a.setIsLiked(true);
@@ -94,14 +96,14 @@ public class FeedServiceImpl implements FeedService {
                     x.getComments(),
                     x.getPublicationDaTe(),
                     x.getMatchDate(),
-                    x.getUserId()
+                    x.getUserId(),
+                    x.getTags()
             );
             a.setLikes(likeRepository.findByPostId(x.getId()).size());
             return a;
         }).toList();
 
-        return resultWithFullLikeInfo;
-//        return getResultRatedByUser(userInfo, resultWithFullLikeInfo);
+        return getResultRatedByUser(userInfo, resultWithFullLikeInfo);
     }
 
     @Override
@@ -168,38 +170,136 @@ public class FeedServiceImpl implements FeedService {
         return result;
     }
 
-//    private List<FeedResponse> getResultRatedByUser(User userInfo, List<FeedResponse> feed) {
-//        // El tipo de publicación para el Feed siempre será "FEED"
-//        final String _TYPE = "FEED";
-//        // Recuperamos los feeds ya visitados por el usuario
-//        List<FeedScore> feedScores = feedScoreRepository.findByUserIdAndType(userInfo.getId(), _TYPE);
-//        // Consideramos que ha visto una publicación cuando la ha tenido en pantalla más de 2 segundos
-//        List<FeedScore> feedScoresElegibles = feedScores.stream().filter(x -> x.getTimeSpent() > 2000).toList();
-//
-//        Comparator<FeedResponse> myPostWithNewComments = (x, y) -> {
-//            Optional<FeedScore> lastSeenX = feedScores.stream()
-//                    .filter(feedX -> feedX.getObjectId().equals(x.getId())).min(Comparator.comparing(FeedScore::getDate));
-//            Optional<FeedScore> lastSeenY = feedScores.stream()
-//                    .filter(feedY -> feedY.getObjectId().equals(y.getId())).min(Comparator.comparing(FeedScore::getDate));
-//            // Comprobamos si x e y ambos o ninguno son del usuario y tienen comentarios pendientes de visualizar
-//            boolean isXMine = x.getUserId().equals(userInfo.getId());
-//            boolean isYMine = y.getUserId().equals(userInfo.getId());
-//            boolean hasXPendingComments = lastSeenX.isPresent()
-//                    && x.getComments().stream()
-//                    .anyMatch(com -> com.getCommentDate().isAfter(lastSeenX.get().getDate()));
-//            boolean hasYPendingComments = lastSeenY.isPresent()
-//                    && y.getComments().stream()
-//                    .anyMatch(com -> com.getCommentDate().isAfter(lastSeenY.get().getDate()));
-//
-//        };
-//
-//        // Ordenamos por los patrones que nos interesen
-//        // - Publicaciones del usuario con comentarios nuevos
-//        // - Publicaciones en las que ha comentado y hay nuevas respuestas de otros usuarios
-//        // - Publicaciones no vistas
-//        //   * Del equipo del usuario
-//        //   * Que contengan alguno de los 3 tags mas interesantes para el usuario
-//        // Publicaciones previamente visualizadas por orden de creación.
-//        return null;
-//    }
+    private List<FeedResponse> getResultRatedByUser(User userInfo, List<FeedResponse> feed) {
+        // El tipo de publicación para el Feed siempre será "FEED"
+        final String _TYPE = "FEED";
+        // Recuperamos los feeds ya visitados por el usuario
+        List<FeedScore> feedScores = feedScoreRepository.findByUserIdAndType(userInfo.getId(), _TYPE);
+        // Consideramos que ha visto una publicación cuando la ha tenido en pantalla más de 2 segundos
+        List<FeedScore> feedScoresElegibles = feedScores.stream().filter(x -> x.getTimeSpent() > 2000).toList();
+
+        // Publicaciones del usuario con comentarios nuevos
+        Comparator<FeedResponse> myPostsWithNewComments = (x, y) -> {
+            Optional<FeedScore> lastSeenX = feedScores.stream()
+                    .filter(feedX -> feedX.getObjectId().equals(x.getId())).min(Comparator.comparing(FeedScore::getDate));
+            Optional<FeedScore> lastSeenY = feedScores.stream()
+                    .filter(feedY -> feedY.getObjectId().equals(y.getId())).min(Comparator.comparing(FeedScore::getDate));
+            // Comprobamos si x e y ambos o ninguno son del usuario y tienen comentarios pendientes de visualizar
+            boolean isXMine = x.getUserId().equals(userInfo.getId());
+            boolean isYMine = y.getUserId().equals(userInfo.getId());
+            boolean hasXPendingComments = lastSeenX.isPresent()
+                    && x.getComments().stream()
+                    .anyMatch(com -> com.getCommentDate().isAfter(lastSeenX.get().getDate()));
+            boolean hasYPendingComments = lastSeenY.isPresent()
+                    && y.getComments().stream()
+                    .anyMatch(com -> com.getCommentDate().isAfter(lastSeenY.get().getDate()));
+            if (isXMine && !isYMine) {
+                if (hasXPendingComments) return -1;
+            } else if (isYMine && !isXMine) {
+                if (hasYPendingComments) return 1;
+            } else if (isXMine && isYMine) {
+                if (hasXPendingComments && !hasYPendingComments) return -1;
+                else if (hasYPendingComments && !hasXPendingComments) return 1;
+            }
+            return x.getPublicationDaTe().compareTo(y.getPublicationDaTe());
+        };
+
+        // Publicaciones en las que ha comentado y hay nuevas respuestas de otros usuarios
+        Comparator<FeedResponse> commentedPostsWithNewComments = (x, y) -> {
+            Optional<FeedScore> lastSeenX = feedScores.stream()
+                    .filter(feedX -> feedX.getObjectId().equals(x.getId())).min(Comparator.comparing(FeedScore::getDate));
+            Optional<FeedScore> lastSeenY = feedScores.stream()
+                    .filter(feedY -> feedY.getObjectId().equals(y.getId())).min(Comparator.comparing(FeedScore::getDate));
+
+            boolean haveICommentedX = x.getComments().stream()
+                    .anyMatch(com -> com.getUserId().equals(userInfo.getId()));
+            boolean haveICommentedY = y.getComments().stream()
+                    .anyMatch((com -> com.getUserId().equals(userInfo.getId())));
+            boolean hasXPendingComments = lastSeenX.isPresent()
+                    && x.getComments().stream()
+                    .anyMatch(com -> com.getCommentDate().isAfter(lastSeenX.get().getDate()));
+            boolean hasYPendingComments = lastSeenY.isPresent()
+                    && y.getComments().stream()
+                    .anyMatch(com -> com.getCommentDate().isAfter(lastSeenY.get().getDate()));
+            if (haveICommentedX && !haveICommentedY) {
+                if (hasXPendingComments) return -1;
+            } else if (haveICommentedY && !haveICommentedX) {
+                if (hasYPendingComments) return 1;
+            } else if (haveICommentedX && haveICommentedY) {
+                if (hasXPendingComments && !hasYPendingComments) return -1;
+                else if (hasYPendingComments && !hasXPendingComments) return 1;
+            }
+            return x.getPublicationDaTe().compareTo(y.getPublicationDaTe());
+        };
+
+        Optional<Team> team = teamRepository.findById(userInfo.getTeamId());
+        // Obtenemos las publicaciones no vistas del equipo del usuario
+        Comparator<FeedResponse> notWatchedBeforeOfMyTeam = (x, y) -> {
+            boolean haveIWatchedX = feedScores.stream().anyMatch(feedX -> feedX.getObjectId().equals(x.getId()));
+            boolean haveIWatchedY = feedScores.stream().anyMatch(feedY -> feedY.getObjectId().equals(y.getId()));
+            boolean isXofMyTeam = team.isPresent() && x.getTags()
+                    .stream().anyMatch(tag -> tag.equals(team.get().getTag()));
+            boolean isYofMyTeam = team.isPresent() && y.getTags()
+                    .stream().anyMatch(tag -> tag.equals(team.get().getTag()));
+            if (haveIWatchedX && !haveIWatchedY) {
+                if (isYofMyTeam) {
+                    return 1;
+                }
+            } else if (haveIWatchedY && !haveIWatchedX) {
+                if (isXofMyTeam) {
+                    return -1;
+                }
+            } else if (!haveIWatchedX && !haveIWatchedY) {
+                if (isXofMyTeam && !isYofMyTeam) {
+                    return -1;
+                }
+                if (isYofMyTeam && !isXofMyTeam) {
+                    return 1;
+                }
+            }
+            return x.getPublicationDaTe().compareTo(y.getPublicationDaTe());
+        };
+
+        // Calculamos los tags con más valor para el usuario.
+        //List<String> tagList = calculateMostValuableTags(feedScores, feed);
+        //TODO desarrollar este último comparador
+        Comparator<FeedResponse> notWatchedWithMyPreferences = (x, y ) -> {return -1;};
+
+        // Ordenamos por los patrones que nos interesen
+        // - Publicaciones del usuario con comentarios nuevos
+        // - Publicaciones en las que ha comentado y hay nuevas respuestas de otros usuarios
+        // - Publicaciones no vistas
+        //   * Del equipo del usuario
+        //   * Que contengan alguno de los 3 tags mas interesantes para el usuario
+        // Publicaciones previamente visualizadas por orden de creación.
+        return feed.stream()
+                .sorted(myPostsWithNewComments
+                        .thenComparing(commentedPostsWithNewComments)
+                        .thenComparing(notWatchedBeforeOfMyTeam)
+                        .thenComparing(notWatchedWithMyPreferences)
+                )
+                .collect(Collectors.toList());
+    }
+
+    private List<String> calculateMostValuableTags(List<FeedScore> feedScores, List<FeedResponse> feed) {
+        List<String> result = new ArrayList<>();
+        HashMap<String, Long> tagValue = new HashMap();
+        // Sumamos a cada tag el tiempo que se ha visualizado entre toda la feed.
+        feed.forEach(item -> {
+            long totalTime = feedScores.stream()
+                    .filter(scores -> scores.getObjectId().equals(item.getId()))
+                    .map(FeedScore::getTimeSpent).mapToLong(Long::longValue).sum();
+            item.getTags().forEach(tag -> {
+                tagValue.put(tag, tagValue.get(tag) + totalTime);
+            });
+        });
+
+        //Devolvemos los tres tags con más tiempo de visualización
+        return tagValue.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .limit(3)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+    }
+
 }
