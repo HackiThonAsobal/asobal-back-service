@@ -5,6 +5,7 @@ import com.asobal.hackathon.service.FeedScoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,7 @@ import javax.validation.Valid;
 
 @RestController
 @Validated
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class FeedScoringController {
 
     @Autowired

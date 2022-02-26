@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @Validated
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class FeedController {
 
     @Autowired

@@ -99,6 +99,7 @@ public class FeedServiceImpl implements FeedService {
             a.setLikes(likeRepository.findByPostId(x.getId()).size());
             return a;
         }).toList();
+
         return resultWithFullLikeInfo;
 //        return getResultRatedByUser(userInfo, resultWithFullLikeInfo);
     }
