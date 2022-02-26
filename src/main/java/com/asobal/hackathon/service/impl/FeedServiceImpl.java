@@ -35,6 +35,10 @@ public class FeedServiceImpl implements FeedService {
         //Recuperamos la información del usuario
         User userInfo = userRepository.findAllByEmail(email).get(0);
 
+        if(userInfo.getTeamId() == null){
+            return new ArrayList<>();
+        }
+
         // Recuperamos la lista completa de noticas.
         List<Feed> listFeed = feedRepository.findAll();
 
